@@ -4,7 +4,6 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
-#include <Windows.h>
 
 using std::string;
 
@@ -18,7 +17,7 @@ typedef uint32_t	uint32;
 typedef uint64_t	uint64;
 typedef int32_t		bool32;
 typedef float		real32;
-typedef double		real64;
+typedef double		real64; 
 
 #define GLOBAL	static
 #define INTERN	static
@@ -28,14 +27,9 @@ typedef double		real64;
 #define ToRadians(a) ((a) * (PI / 180.0f))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #define max(a, b) (((a) > (b)) ? (a) : (b))
+//#define clamp(a, b, c) (clip((a) / (c) + (b), b, c))
 #define clip(a, b, c) (min(max((a), (b)), (c)))
 #define lerp(a, b, c) ((a) * (1 - (c)) + (b) * (c))
-#define Log(format, ...)							\
-	{												\
-		char str[256] = "";							\
-		sprintf_s(str, 256, format, __VA_ARGS__);	\
-		OutputDebugStringA(str);					\
-	}												\
 
 #define ATLAS_STDAFX_H
 #endif

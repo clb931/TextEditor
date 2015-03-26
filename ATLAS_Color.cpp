@@ -1,21 +1,14 @@
-#include "Stdafx.h"
-#include "Color4f.h"
+#include "ATLAS_Stdafx.h"
+#include "ATLAS_Color.h"
 
-Color4f::Color4f(real32 r, real32 g, real32 b, real32 a)
+Color::Color(real32 r, real32 g, real32 b, real32 a)
 {
 	R = min(1.0f, r);
 	G = min(1.0f, g);
 	B = min(1.0f, b);
 	A = min(1.0f, a);
 }
-Color4f::Color4f(uint32 c)
-{
-	R = ((c >> 16) & 0xFF) / 255.0f;
-	G = ((c >> 8) & 0xFF) / 255.0f;
-	B = ((c >> 0) & 0xFF) / 255.0f;
-	A = ((c >> 24) & 0xFF) / 255.0f;
-}
-Color32 Color4f::toColor32() const
+Color32 Color::toColor32() const
 {
 	return Color32(
 		((uint32)(A * 255.0f) << 24) |
@@ -23,197 +16,236 @@ Color32 Color4f::toColor32() const
 		((uint32)(G * 255.0f) << 8) |
 		((uint32)(B * 255.0f) << 0));
 }
-Color4f Color4f::operator+=(const Color4f &top)
+Color &Color::operator+=(const Color &rhs)
 {
-	R += top.R;
-	G += top.G;
-	B += top.B;
-	A += top.A;
+	R += rhs.R;
+	G += rhs.G;
+	B += rhs.B;
+	A += rhs.A;
 	return *this;
 }
-Color4f Color4f::operator-(const Color4f &top) const
+Color &Color::operator-=(const Color &rhs)
 {
-	return Color4f(R - top.R, G - top.G, B - top.B, A - top.A);
+	R -= rhs.R;
+	G -= rhs.G;
+	B -= rhs.B;
+	A -= rhs.A;
+	return *this;
 }
-Color4f Color4f::operator*(const Color4f &top) const
+Color &Color::operator*=(const Color &rhs)
 {
-	return Color4f(R * top.R, G * top.G, B * top.B, A * top.A);
+	R *= rhs.R;
+	G *= rhs.G;
+	B *= rhs.B;
+	A *= rhs.A;
+	return *this;
 }
-Color4f Color4f::operator/(const Color4f &top) const
+Color &Color::operator/=(const Color &rhs)
 {
-	if (top.R == 0.0f && top.G == 0.0f && top.B == 0.0f)
-		return Color4f();
+	if (rhs.R == 0.0f && rhs.G == 0.0f && rhs.B == 0.0f)
+		return Color();
 
-	Color4f c(R / top.R, G / top.G, B / top.B, A / top.A);
-	return c;
+	R /= rhs.R;
+	G /= rhs.G;
+	B /= rhs.B;
+	A /= rhs.A;
+	return *this;
 }
-Color4f Color4f::operator*(real32 f) const
+Color &Color::operator*=(real32 rhs)
 {
-	return Color4f(R * f, G * f, B * f, A * f);
+	R *= rhs;
+	G *= rhs;
+	B *= rhs;
+	A *= rhs;
+	return *this;
 }
-Color4f Color4f::operator/(real32 f) const
+Color &Color::operator/=(real32 rhs)
 {
-	return Color4f(R / f, G / f, B / f, A / f);
+	R /= rhs;
+	G /= rhs;
+	B /= rhs;
+	A /= rhs;
+	return *this;
 }
-Color4f Color4f::operator~()
+Color Color::operator~()
 {
-	return Color4f(1.0f - R, 1.0f - G, 1.0f - B, 1.0f - A);
+	return Color(1.0f - R, 1.0f - G, 1.0f - B, 1.0f - A);
 }
 
-Color4f operator+(Color4f bottom, const Color4f &top)
+Color operator+(Color lhs, const Color &rhs)
 {
-	return bottom += top;
+	return lhs += rhs;
+}
+Color operator-(Color lhs, const Color &rhs)
+{
+	return lhs -= rhs;
+}
+Color operator*(Color lhs, const Color &rhs)
+{
+	return lhs *= rhs;
+}
+Color operator/(Color lhs, const Color &rhs)
+{
+	return lhs /= rhs;
+}
+Color operator*(Color lhs, real32 rhs)
+{
+	return lhs *= rhs;
+}
+Color operator/(Color lhs, real32 rhs)
+{
+	return lhs /= rhs;
 }
 
-char *GetBlendModeName(BlendMode blend_mode)
+char *GetBlendModeName(Color::BlendMode blend_mode)
 {
 	char *result;
 
 	switch (blend_mode) {
 	default:
-	case BLEND_NORMAL:
+	case Color::BLEND_NORMAL:
 		result = "BLEND_NORMAL";
 		break;
-	case BLEND_ADD:
+	case Color::BLEND_ADD:
 		result = "BLEND_ADD";
 		break;
-	case BLEND_SUBTRACT:
+	case Color::BLEND_SUBTRACT:
 		result = "BLEND_SUBTRACT";
 		break;
-	case BLEND_MULTIPLY:
+	case Color::BLEND_MULTIPLY:
 		result = "BLEND_MULTIPLY";
 		break;
-	case BLEND_DIVIDE:
+	case Color::BLEND_DIVIDE:
 		result = "BLEND_DIVIDE";
 		break;
-	case BLEND_SCREEN:
+	case Color::BLEND_SCREEN:
 		result = "BLEND_SCREEN";
 		break;
-	case BLEND_OVERLAY:
+	case Color::BLEND_OVERLAY:
 		result = "BLEND_OVERLAY";
 		break;
-	case BLEND_COLOR_DOGE:
+	case Color::BLEND_COLOR_DOGE:
 		result = "BLEND_COLOR_DOGE";
 		break;
-	case BLEND_COLOR_BURN:
+	case Color::BLEND_COLOR_BURN:
 		result = "BLEND_COLOR_BURN";
 		break;
-	case BLEND_DIFFERENCE:
+	case Color::BLEND_DIFFERENCE:
 		result = "BLEND_DIFFERENCE";
 		break;
-	case BLEND_DARKEN:
+	case Color::BLEND_DARKEN:
 		result = "BLEND_DARKEN";
 		break;
-	case BLEND_LIGHTEN:
+	case Color::BLEND_LIGHTEN:
 		result = "BLEND_LIGHTEN";
 		break;
 	}
 
 	return result;
 }
-Color4f Blend(Color4f bottom, Color4f top, BlendMode blend_mode)
+Color Blend(Color bottom, Color top, Color::BlendMode blend_mode)
 {
-	Color4f result;
+	Color result;
 
 	switch (blend_mode) {
 	default:
-	case BLEND_NORMAL:
+	case Color::BLEND_NORMAL:
 		result = BlendNormal(bottom, top);
 		break;
-	case BLEND_ADD:
+	case Color::BLEND_ADD:
 		result = BlendAdd(bottom, top);
 		break;
-	case BLEND_SUBTRACT:
+	case Color::BLEND_SUBTRACT:
 		result = BlendSubtract(bottom, top);
 		break;
-	case BLEND_MULTIPLY:
+	case Color::BLEND_MULTIPLY:
 		result = BlendMultiply(bottom, top);
 		break;
-	case BLEND_DIVIDE:
+	case Color::BLEND_DIVIDE:
 		result = BlendDivide(bottom, top);
 		break;
-	case BLEND_SCREEN:
+	case Color::BLEND_SCREEN:
 		result = BlendScreen(bottom, top);
 		break;
-	case BLEND_OVERLAY:
+	case Color::BLEND_OVERLAY:
 		result = BlendOverlay(bottom, top);
 		break;
-	case BLEND_COLOR_DOGE:
+	case Color::BLEND_COLOR_DOGE:
 		result = BlendDodge(bottom, top);
 		break;
-	case BLEND_COLOR_BURN:
+	case Color::BLEND_COLOR_BURN:
 		result = BlendBurn(bottom, top);
 		break;
-	case BLEND_DIFFERENCE:
+	case Color::BLEND_DIFFERENCE:
 		result = BlendDifference(bottom, top);
 		break;
-	case BLEND_DARKEN:
+	case Color::BLEND_DARKEN:
 		result = BlendDarken(bottom, top);
 		break;
-	case BLEND_LIGHTEN:
+	case Color::BLEND_LIGHTEN:
 		result = BlendLighten(bottom, top);
 		break;
 	}
 
 	return result;
 }
-Color4f BlendNormal(Color4f bottom, Color4f top)
+Color BlendNormal(Color bottom, Color top)
 {
 	return top;
 }
-Color4f BlendAdd(Color4f bottom, Color4f top)
+Color BlendAdd(Color bottom, Color top)
 {
 	return bottom + top;
 }
-Color4f BlendSubtract(Color4f bottom, Color4f top)
+Color BlendSubtract(Color bottom, Color top)
 {
 	return bottom - top;
 }
-Color4f BlendMultiply(Color4f bottom, Color4f top)
+Color BlendMultiply(Color bottom, Color top)
 {
 	return bottom * top;
 }
-Color4f BlendDivide(Color4f bottom, Color4f top)
+Color BlendDivide(Color bottom, Color top)
 {
 	return bottom / top;
 }
-Color4f BlendScreen(Color4f bottom, Color4f top)
+Color BlendScreen(Color bottom, Color top)
 {
 	return ~(~bottom * ~top);
 }
-Color4f BlendOverlay(Color4f bottom, Color4f top)
+Color BlendOverlay(Color bottom, Color top)
 {
-	Color4f c1 = (bottom * top) * 2.0f;
-	Color4f c2 = ~((~bottom * ~top) * 2.0f);
-	return Color4f(bottom.R < 0.5f ? c1.R : c2.R,
+	Color c1 = (bottom * top) * 2.0f;
+	Color c2 = ~((~bottom * ~top) * 2.0f);
+	return Color(bottom.R < 0.5f ? c1.R : c2.R,
 		bottom.G < 0.5f ? c1.G : c2.G,
 		bottom.B < 0.5f ? c1.B : c2.B,
 		bottom.A < 0.5f ? c1.A : c2.A);
 }
-Color4f BlendDodge(Color4f bottom, Color4f top)
+Color BlendDodge(Color bottom, Color top)
 {
 	return bottom / ~top;
 }
-Color4f BlendBurn(Color4f bottom, Color4f top)
+Color BlendBurn(Color bottom, Color top)
 {
 	return ~((~bottom) / top);
 }
-Color4f BlendDifference(Color4f bottom, Color4f top)
+Color BlendDifference(Color bottom, Color top)
 {
-	Color4f c;
+	Color c;
 	c.R = bottom.R < top.R ? top.R - bottom.R : bottom.R - top.R;
 	c.G = bottom.G < top.G ? top.G - bottom.G : bottom.G - top.G;
 	c.B = bottom.B < top.B ? top.B - bottom.B : bottom.B - top.B;
 	c.A = bottom.A < top.A ? top.A - bottom.A : bottom.A - top.A;
 	return c;
 }
-Color4f BlendDarken(Color4f bottom, Color4f top)
+Color BlendDarken(Color bottom, Color top)
 {
-	return Color4f(min(bottom.R, top.R), min(bottom.G, top.G), min(bottom.B, top.B), min(bottom.A, top.A));
+	return Color(min(bottom.R, top.R), min(bottom.G, top.G), min(bottom.B, top.B), min(bottom.A, top.A));
 }
-Color4f BlendLighten(Color4f bottom, Color4f top)
+Color BlendLighten(Color bottom, Color top)
 {
-	return Color4f(max(bottom.R, top.R), max(bottom.G, top.G), max(bottom.B, top.B), max(bottom.A, top.A));
+	return Color(max(bottom.R, top.R), max(bottom.G, top.G), max(bottom.B, top.B), max(bottom.A, top.A));
 }
 
 	
@@ -223,8 +255,7 @@ struct hsv
 	real32 s;
 	real32 v;
 };
-
-hsv rgb2hsv(Color4f in)
+hsv rgb2hsv(Color in)
 {
 	hsv out;
 	real32 min, max, delta;
@@ -259,9 +290,9 @@ hsv rgb2hsv(Color4f in)
 
 	return out;
 }
-Color4f hsv2rgb(hsv in)
+Color hsv2rgb(hsv in)
 {
-	Color4f out;
+	Color out;
 	real32 hh, p, q, t, ff;
 	int32 i;
 
@@ -318,7 +349,7 @@ Color4f hsv2rgb(hsv in)
 	return out;
 }
 
-Color4f LerpColor(Color4f min_color, Color4f max_color, real32 step)
+Color LerpColor(Color min_color, Color max_color, real32 step)
 {
 	//hsv ca = rgb2hsv(min_color);
 	//hsv cb = rgb2hsv(max_color);
@@ -333,11 +364,11 @@ Color4f LerpColor(Color4f min_color, Color4f max_color, real32 step)
 	return lerp(min_color, max_color, step);
 }
 
-const Color4f Color4f::RED = Color4f(1.0f, 0.0f, 0.0f, 0.1f);
-const Color4f Color4f::GREEN = Color4f(0.0f, 1.0f, 0.0f, 0.1f);
-const Color4f Color4f::BLUE = Color4f(0.0f, 0.0f, 1.0f, 0.1f);
-const Color4f Color4f::BLACK = Color4f(0.0f, 0.0f, 0.0f, 0.1f);
-const Color4f Color4f::CYAN = Color4f(0.0f, 1.0f, 1.0f, 0.1f);
-const Color4f Color4f::MAGENTA = Color4f(1.0f, 0.0f, 1.0f, 0.1f);
-const Color4f Color4f::YELLOW = Color4f(1.0f, 1.0f, 0.0f, 0.1f);
-const Color4f Color4f::WHITE = Color4f(1.0f, 1.0f, 1.0f, 0.1f);
+const Color Color::RED = Color(1.0f, 0.0f, 0.0f, 0.1f);
+const Color Color::GREEN = Color(0.0f, 1.0f, 0.0f, 0.1f);
+const Color Color::BLUE = Color(0.0f, 0.0f, 1.0f, 0.1f);
+const Color Color::BLACK = Color(0.0f, 0.0f, 0.0f, 0.1f);
+const Color Color::CYAN = Color(0.0f, 1.0f, 1.0f, 0.1f);
+const Color Color::MAGENTA = Color(1.0f, 0.0f, 1.0f, 0.1f);
+const Color Color::YELLOW = Color(1.0f, 1.0f, 0.0f, 0.1f);
+const Color Color::WHITE = Color(1.0f, 1.0f, 1.0f, 0.1f);

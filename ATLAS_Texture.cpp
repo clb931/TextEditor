@@ -1,15 +1,17 @@
-#include "Stdafx.h"
-#include "BitmapImage.h"
+#include "ATLAS_Stdafx.h"
+#include "ATLAS_Texture.h"
+#include <Windows.h>
+using namespace ATLAS;
 
 uint32 texture_count = 0;
 
-BitmapImage::BitmapImage(const char *file_path) : data(nullptr)
+Texture::Texture(const char *file_path) : data(nullptr)
 {
 	char str[256] = "";
 	FILE *pFile;
 	BMP colors;
 
-	Log("Openging file...\n");
+	OutputDebugStringA("\nOpenging file...\n");
 	fopen_s(&pFile, file_path, "rb");
 	if (pFile) {
 		fseek(pFile, sizeof(short) * 9, SEEK_SET);
@@ -19,8 +21,8 @@ BitmapImage::BitmapImage(const char *file_path) : data(nullptr)
 		fread(&bpp, sizeof(short), 1, pFile);
 		fseek(pFile, sizeof(int) * 6, SEEK_CUR);
 
-		sprintf_s(str, 256, "\tDimensions: %i x %i\nBPP: %i\n", width, height, bpp);
-		Log(str);
+		sprintf_s(str, 256, "Dimensions: %i x %i\nBPP: %i\n", width, height, bpp);
+		OutputDebugStringA(str);
 
 		if (bpp <= 8)
 			for (uint32 a = 0; a < bpp; a++)
@@ -29,8 +31,8 @@ BitmapImage::BitmapImage(const char *file_path) : data(nullptr)
 		data = (uint8 *)malloc(width * height * 4);
 		memset(data, 0, width * height * 4);
 
-		sprintf_s(str, 256, "\tSize: %.2fKB\n", (width * height) / 1024.0f);
-		Log(str);
+		sprintf_s(str, 256, "nsize: %.2fKB\n", (width * height) / 1024.0f);
+		OutputDebugStringA(str);
 		uint32 j = 0;
 		for (uint32 i = 0; i < width * height; ++i) {
 			fread(&colors, sizeof(BMP), 1, pFile);
@@ -46,29 +48,29 @@ BitmapImage::BitmapImage(const char *file_path) : data(nullptr)
 		id = texture_count++;
 		strcpy_s(m_Name, 64, file_path);
 
-		Log("Clossing File...\n");
+		OutputDebugStringA("Clossing File...\n\n");
 		fclose(pFile);
 	}
 	else {
-		Log("***Error***\n");
-		Log("File does not exist.\n");
+		perror("The following error occurred");
+		OutputDebugStringA("File does not exist.\n");
 	}
 }
-BitmapImage::~BitmapImage()
+Texture::~Texture()
 {
-	Log("Freeing BitmapImage: ");
-	Log(m_Name);
-	Log("\n");
+	OutputDebugStringA("Freeing Texture: ");
+	OutputDebugStringA(m_Name);
+	OutputDebugStringA("\n");
 
 	if (data)
 		free(data);
 }
 
-void BitmapImage::SetName(const char *name)
+void Texture::SetName(const char *name)
 {
 	strcpy_s(m_Name, 64, name);
 }
-char *BitmapImage::GetName()
+char *Texture::GetName()
 {
 	return m_Name;
 }
